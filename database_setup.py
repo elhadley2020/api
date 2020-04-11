@@ -1,9 +1,10 @@
 import sys
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy.sql import func
 
 Base = declarative_base()
 
@@ -34,5 +35,42 @@ class Contact(Base):
             'id': self.id
         }
 
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(250), nullable = False )
+    password = Column(String(250), nullable = False )
+    email = Column(String(250), nullable = False)
+    date_created = Column(DateTime(timezone=True), server_default=func.now())
+    updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+    @property 
+    def serialize(self):
+        return {
+            'username': self.username,
+            'password': self.password,
+            'email': self.email,
+            'date_created': self.date_created,
+            'updated': self.updated,
+            'id':self.id
+        }
+
+def _get_date():
+    return datetime.datetime.now()
+
+'''
+
+class Note(Base):
+    __tablename__ = 'note'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(250), nullable=False)
+    content = Column(String(250), nullable=False)
+    author_id = Column(Integer, nullable = False)
+    contact_id = Column(Integer, nullable=False)
+    timestamp = Column(Date, default=_get_date)
+    updated = Column(Date, onupdate=_get_date)
+'''
 engine = create_engine("sqlite:///contact-collection.db")
 Base.metadata.create_all(engine)
