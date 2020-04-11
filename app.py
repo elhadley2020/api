@@ -75,6 +75,19 @@ def put_contact(contact_id, first_name, last_name, phone, email, street, city, s
     session.commit()
     return jsonify(Contact=put_contact.serialize)
 
+def put_user(user_id, username, password, email):
+    put_user = session.query(User).filter_by(id=user_id).one()
+    if username:
+        put_user.username = username
+    if password:
+        put_user.password = password
+    if email:
+        put_user.email = email
+
+    session.add(put_user)
+    session.commit()
+    return jsonify(User=put_user.serialize)
+
 def delete_contact(contact_id):
     delete_contact = session.query(Contact).filter_by(id=contact_id).one()
     session.delete(delete_contact)
@@ -96,6 +109,13 @@ def post_user(username,password,email):
     session.commit()
     return jsonify(User=post_user.serialize)
 
+def delete_user(id):
+    delete_user = session.query(User).filter_by(id=id).one()
+    session.delete(delete_user)
+    session.commit()
+
+    users = session.query(User).all()
+    return jsonify(users=[u.serialize for u in users])
 '''
 
     Methods for routes
@@ -146,6 +166,7 @@ def put_request_contact(id):
         return put_contact(id, first_name, last_name, phone, email, street, city, state, zip)
 
 # Routes for Users
+
 @app.route('/users', methods = ['GET'])
 def get_request_users():
     if request.method == "GET":
@@ -159,6 +180,23 @@ def post_request_user():
         password = request.args.get('password', '')
         email = request.args.get('email', '')
         return post_user(username,password,email)
+
+
+@app.route('/user/<int:id>', methods = ['PUT'])
+def put_request_user(id):
+    if request.method == "PUT":
+        username = request.args.get('username', '')
+        password = request.args.get('password', '')
+        email = request.args.get('email', '')
+        return put_user(id,username,password,email)
+
+@app.route('/user/<int:id>', methods = ['DELETE'])
+def delete_request_user(id):
+    if request.method == "DELETE":
+        return delete_user(id)
+
+
+####################################################################################################
 
 if __name__ == '__main__':
     app.debug = True
