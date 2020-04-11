@@ -22,14 +22,8 @@ def get_contact(contact_id):
 
 def post_contact(first_name, last_name, phone, email, street, city, state, zip):
     post_contact = Contact(
-        first_name = first_name,
-        last_name = last_name,
-        phone = phone,
-        email = email,
-        street = street,
-        city = city,   
-        state = state,
-        zip = zip
+        first_name = first_name,last_name = last_name,phone = phone,email = email,
+        street = street,city = city, state = state, zip = zip
     ) 
     session.add(post_contact)
     session.commit()
@@ -37,22 +31,14 @@ def post_contact(first_name, last_name, phone, email, street, city, state, zip):
 
 def put_contact(contact_id, first_name, last_name, phone, email, street, city, state, zip):
     put_contact = session.query(Contact).filter_by(id=contact_id).one()
-    if first_name:
-        put_contact.first_name = first_name
-    if last_name:
-        put_contact.last_name = last_name
-    if phone:
-        put_contact.phone = phone
-    if email:
-        put_contact.email = email
-    if street:
-        put_contact.street = street
-    if city:
-        put_contact.city = city
-    if state:
-        put_contact.state = state
-    if zip:
-        put_contact.zip = zip
+    if first_name : put_contact.first_name = first_name
+    if last_name : put_contact.last_name = last_name
+    if phone : put_contact.phone = phone
+    if email : put_contact.email = email
+    if street : put_contact.street = street
+    if city : put_contact.city = city
+    if state : put_contact.state = state
+    if zip : put_contact.zip = zip
     
     session.add(put_contact)
     session.commit()
@@ -60,12 +46,9 @@ def put_contact(contact_id, first_name, last_name, phone, email, street, city, s
 
 def put_user(user_id, username, password, email):
     put_user = session.query(User).filter_by(id=user_id).one()
-    if username:
-        put_user.username = username
-    if password:
-        put_user.password = password
-    if email:
-        put_user.email = email
+    if username:put_user.username = username
+    if password:put_user.password = password
+    if email:put_user.email = email
 
     session.add(put_user)
     session.commit()
@@ -81,9 +64,7 @@ def delete_contact(contact_id):
 
 def post_user(username,password,email):
     post_user = User(
-        username = username,
-        password = password,
-        email = email
+        username = username,password = password,email = email
     )
 
     session.add(post_user)
