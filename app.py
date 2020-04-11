@@ -1,31 +1,14 @@
 from flask import Flask, request
 app = Flask(__name__)
 
-'''
-
-    Methods for database setup
-
-'''
-
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Contact, User
 
 engine = create_engine('sqlite:///contact-collection.db?checksame_thread=False')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
-
-'''
-    
-    Methods for updating the model and database
-
- '''
-
-# Methods for Contacts
 
 from flask import jsonify
 
@@ -96,8 +79,6 @@ def delete_contact(contact_id):
     contacts = session.query(Contact).all()
     return jsonify(contacts=[c.serialize for c in contacts])
 
-
-# Methods for Users
 def post_user(username,password,email):
     post_user = User(
         username = username,
@@ -116,13 +97,6 @@ def delete_user(id):
 
     users = session.query(User).all()
     return jsonify(users=[u.serialize for u in users])
-'''
-
-    Methods for routes
-
-'''
-
-### Routes for contact
 
 @app.route('/contacts')
 def get_request_contacts():
@@ -165,13 +139,17 @@ def put_request_contact(id):
         zip = request.args.get('zip', '')
         return put_contact(id, first_name, last_name, phone, email, street, city, state, zip)
 
-# Routes for Users
-
 @app.route('/users', methods = ['GET'])
 def get_request_users():
     if request.method == "GET":
         users = session.query(User).all()
         return jsonify(users=[u.serialize for u in users])
+
+@app.route('/user/<int:id>', methods = ['GET'])
+def get_request_user(id):
+    if request.method == 'GET':
+        user = session.query(User).filter_by(id=id).one()
+        return jsonify(user=user.serialize)
 
 @app.route('/user', methods = ['POST'])
 def post_request_user():
@@ -180,7 +158,6 @@ def post_request_user():
         password = request.args.get('password', '')
         email = request.args.get('email', '')
         return post_user(username,password,email)
-
 
 @app.route('/user/<int:id>', methods = ['PUT'])
 def put_request_user(id):
@@ -194,9 +171,6 @@ def put_request_user(id):
 def delete_request_user(id):
     if request.method == "DELETE":
         return delete_user(id)
-
-
-####################################################################################################
 
 if __name__ == '__main__':
     app.debug = True

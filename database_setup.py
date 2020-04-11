@@ -59,7 +59,7 @@ class User(Base):
 def _get_date():
     return datetime.datetime.now()
 
-'''
+
 
 class Note(Base):
     __tablename__ = 'note'
@@ -69,8 +69,20 @@ class Note(Base):
     content = Column(String(250), nullable=False)
     author_id = Column(Integer, nullable = False)
     contact_id = Column(Integer, nullable=False)
-    timestamp = Column(Date, default=_get_date)
-    updated = Column(Date, onupdate=_get_date)
-'''
+    date_created = Column(DateTime(timezone=True), server_default=func.now())
+    updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+    @property
+    def serialize(self):
+        return {
+            'title':self.title,
+            'content':self.content,
+            'author_id':self.author_id,
+            'contact_id':self.contact_id,
+            'date_created':self.date_created,
+            'updated':self.updated,
+            'id':self.id
+        }
+
 engine = create_engine("sqlite:///contact-collection.db")
 Base.metadata.create_all(engine)
